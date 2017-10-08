@@ -1,0 +1,49 @@
+{
+    "name": "liquidbox/silex-plates",
+    "description": "A Plates template engine service provider for the Silex micro-framework",
+    "keywords": [
+        "silex",
+        "service",
+        "provider",
+        "plates",
+        "template",
+        "engine",
+        "php",
+        "html",
+        "thephpleague",
+        "league"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jonathan-Paul Marois",
+            "email": "jonathanpaul.marois@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "silex/silex": "^1.0",
+        "league/plates": "^3.0"
+    },
+    "require-dev": {
+        "symfony/security": "^2.0",
+        "friendsofphp/php-cs-fixer": "^2.0",
+        "phpunit/phpunit": "^4.0|^5.0"
+    },
+    "suggest": {
+        "symfony/security": "For using the Security extension"
+    },
+    "replace": {
+        "rych/silex-plates-provider": "v1.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "LiquidBox\\": "src/LiquidBox"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LiquidBox\\Tests\\": "tests/LiquidBox/Tests"
+        }
+    }
+}
