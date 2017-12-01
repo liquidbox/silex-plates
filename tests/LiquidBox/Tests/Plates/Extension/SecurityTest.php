@@ -2,7 +2,11 @@
 
 namespace LiquidBox\Tests\Plates\Extension;
 
+use LiquidBox\Silex\Provider\PlatesServiceProvider;
+use Silex\Application;
+use Silex\Provider\SecurityServiceProvider;
 use Silex\WebTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Jonathan-Paul Marois <jonathanpaul.marois@gmail.com>
@@ -11,12 +15,12 @@ class SecurityTest extends WebTestCase
 {
     public function createApplication()
     {
-        $app = new \Silex\Application();
+        $app = new Application();
 
-        $app->register(new \LiquidBox\Silex\Provider\PlatesServiceProvider(), [
+        $app->register(new PlatesServiceProvider(), [
             'plates.directory' => __DIR__ . '/../../Resources/views',
         ]);
-        $app->register(new \Silex\Provider\SecurityServiceProvider(), [
+        $app->register(new SecurityServiceProvider(), [
             'security.firewalls' => [
                 'default' => [
                     'anonymous' => true,
@@ -24,7 +28,7 @@ class SecurityTest extends WebTestCase
             ],
         ]);
 
-        $app['request'] = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
+        $app['request_stack']->push(Request::createFromGlobals());
 
         $app->boot();
 
@@ -33,7 +37,10 @@ class SecurityTest extends WebTestCase
 
     public function testRegister()
     {
-        $this->assertTrue($this->app['plates']->doesFunctionExist('is_granted'));
+        $this->assertTrue(
+            $this->app['plates']->doesFunctionExist('is_granted'),
+            'Function is_granted() does not exist.'
+        );
     }
 
     /*public function testIsGrantedCall()

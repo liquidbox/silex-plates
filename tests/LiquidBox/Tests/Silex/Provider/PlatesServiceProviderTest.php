@@ -2,6 +2,7 @@
 
 namespace LiquidBox\Tests\Silex\Provider;
 
+use League\Plates\Engine;
 use LiquidBox\Silex\Provider\PlatesServiceProvider;
 use Silex\Application;
 use Silex\WebTestCase;
@@ -16,7 +17,7 @@ class PlatesServiceProviderTest extends WebTestCase
     {
         $app = new Application();
 
-        $app['request'] = Request::createFromGlobals();
+        $app['request_stack']->push(Request::createFromGlobals());
 
         return $app;
     }
@@ -85,7 +86,7 @@ class PlatesServiceProviderTest extends WebTestCase
     {
         $this->app->register(new PlatesServiceProvider());
 
-        $this->assertInstanceOf('\\League\\Plates\\Engine', $this->app['plates']);
+        $this->assertInstanceOf(Engine::class, $this->app['plates']);
 
         return $this->app;
     }
@@ -95,7 +96,7 @@ class PlatesServiceProviderTest extends WebTestCase
      */
     public function testEngineFactory(Application $app)
     {
-        $this->assertInstanceOf('\\League\\Plates\\Engine', $app['plates.engine_factory']());
+        $this->assertInstanceOf(Engine::class, $app['plates.engine_factory']());
     }
 
     /**
@@ -105,7 +106,7 @@ class PlatesServiceProviderTest extends WebTestCase
     {
         $app['plates.extension_loader.asset'](__DIR__ . '/../../Resources/web');
 
-        $this->assertTrue($app['plates']->doesFunctionExist('asset'));
+        $this->assertTrue($app['plates']->doesFunctionExist('asset'), 'Assets in given path failed to load.');
     }
 
     /**
@@ -113,7 +114,7 @@ class PlatesServiceProviderTest extends WebTestCase
      */
     public function testExtensionURI(Application $app)
     {
-        $this->assertTrue($app['plates']->doesFunctionExist('uri'));
+        $this->assertTrue($app['plates']->doesFunctionExist('uri'), 'URI extension failed to load.');
     }
 
     public function testRegisterWithDirectory()
@@ -147,7 +148,7 @@ class PlatesServiceProviderTest extends WebTestCase
 
         $this->app['plates']->setDirectory(__DIR__ . '/../../Resources/views');
 
-        $this->assertTrue($this->app['plates']->exists('index.php'));
+        $this->assertTrue($this->app['plates']->exists('index.php'), 'Template "index.php" is not found.');
     }
 
     /**
@@ -159,7 +160,7 @@ class PlatesServiceProviderTest extends WebTestCase
             'plates.folders' => $platesFolders,
         ]);
 
-        $this->assertTrue($this->app['plates']->exists('sections::article'));
+        $this->assertTrue($this->app['plates']->exists('sections::article'), 'Template folders were not added.');
     }
 
     public function testRegisterWithFunctions()
@@ -175,16 +176,7 @@ class PlatesServiceProviderTest extends WebTestCase
             ],
         ]);
 
-        $this->assertTrue($this->app['plates']->doesFunctionExist('foo'));
-    }
-
-    public function testRegisterWithPath()
-    {
-        $this->app->register(new PlatesServiceProvider(), [
-            'plates.path' => __DIR__ . '/../../Resources/views',
-        ]);
-
-        $this->assertTrue($this->app['plates']->exists('index'));
+        $this->assertTrue($this->app['plates']->doesFunctionExist('foo'), 'Closure "foo" was not registered.');
     }
 
     public function testRegisterWithSharedVariables()

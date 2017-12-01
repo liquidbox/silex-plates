@@ -5,7 +5,7 @@ namespace LiquidBox\Plates\Extension;
 use League\Plates\Engine;
 use League\Plates\Extension\ExtensionInterface;
 use Symfony\Component\Security\Acl\Voter\FieldVote;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 /**
  * Security exposes security context features.
@@ -14,11 +14,11 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
  */
 class Security implements ExtensionInterface
 {
-    private $securityContext;
+    private $authorizationChecker;
 
-    public function __construct(SecurityContextInterface $securityContext = null)
+    public function __construct(AuthorizationCheckerInterface $authorizationChecker = null)
     {
-        $this->securityContext = $securityContext;
+        $this->authorizationChecker = $authorizationChecker;
     }
 
     /**
@@ -26,14 +26,14 @@ class Security implements ExtensionInterface
      */
     public function isGranted($attributes, $object = null, $field = null)
     {
-        if (null === $this->securityContext) {
+        if (null === $this->authorizationChecker) {
             return false;
         }
         if (null !== $field) {
             $object = new FieldVote($object, $field);
         }
 
-        return $this->securityContext->isGranted($attributes, $object);
+        return $this->authorizationChecker->isGranted($attributes, $object);
     }
 
     public function register(Engine $engine)

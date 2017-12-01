@@ -5,7 +5,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/liquidbox/silex-plates/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/liquidbox/silex-plates/?branch=master)
 [![Packagist](https://img.shields.io/packagist/dt/liquidbox/silex-plates.svg)](https://packagist.org/packages/liquidbox/silex-plates)
 
-You are reading the documentation for Silex 1.x.
+You are reading the documentation for Silex 2.x. Switch to the documentation for Silex [1.x](../v1.0.0/README.md).
 
 # Plates
 
@@ -43,15 +43,20 @@ $app->register(new \LiquidBox\Silex\Provider\PlatesServiceProvider(), array(
 Add Plates as a dependency:
 
 ```shell
-composer require liquidbox/silex-plates:^1.0
+composer require liquidbox/silex-plates:^2.0
 ```
 
 ## Symfony Components Integration
 
 The <code>PlatesServiceProvider</code> provides additional integration between some Symfony components and Plates. This will provide you with the following additional capabilities.
 
-* <strong>UrlGeneratorServiceProvider</strong>: If you are using the <code>UrlGeneratorServiceProvider</code>, you will have access to the <code>path()</code> and <code>url()</code> functions. You can find more information in the [Symfony Routing documentation](http://symfony.com/doc/2.8/routing.html).
-* <strong>SecurityServiceProvider</strong>: If you are using the <code>SecurityServiceProvider</code>, you will have access to the <code>is_granted()</code> function in templates. You can find more information in the [Symfony Security documentation](http://symfony.com/doc/2.8/security.html).
+### Route Support
+
+If you are using the <code>UrlGeneratorServiceProvider</code>, you will have access to the <code>path()</code> and <code>url()</code> functions. You can find more information in the [Symfony Routing documentation](http://symfony.com/doc/2.8/routing.html).
+
+### Security Support
+
+If you are using the <code>SecurityServiceProvider</code>, you will have access to the <code>is_granted()</code> function in templates. You can find more information in the [Symfony Security documentation](http://symfony.com/doc/2.8/security.html).
 
 ## Usage
 

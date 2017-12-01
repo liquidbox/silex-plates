@@ -12,8 +12,8 @@ use League\Plates\Extension\Asset;
 use League\Plates\Extension\URI;
 use LiquidBox\Plates\Extension\Routing;
 use LiquidBox\Plates\Extension\Security;
-use Silex\Application;
-use Silex\ServiceProviderInterface;
+use Pimple\Container;
+use Pimple\ServiceProviderInterface;
 
 /**
  * Plates Provider.
@@ -22,7 +22,7 @@ use Silex\ServiceProviderInterface;
  */
 class PlatesServiceProvider implements ServiceProviderInterface
 {
-    private function addData(Application $app, Engine $engine)
+    private function addData(Container $app, Engine $engine)
     {
         if (!empty($app['plates.data'])) {
             if (isset($app['plates.data'][0])) {
@@ -39,7 +39,7 @@ class PlatesServiceProvider implements ServiceProviderInterface
         }
     }
 
-    private function addFolders(Application $app, Engine $engine)
+    private function addFolders(Container $app, Engine $engine)
     {
         if (!empty($app['plates.folders'])) {
             if (isset($app['plates.folders'][0])) {
@@ -58,7 +58,7 @@ class PlatesServiceProvider implements ServiceProviderInterface
         }
     }
 
-    private function loadExtensionAsset(Application $app, Engine $engine)
+    private function loadExtensionAsset(Container $app, Engine $engine)
     {
         if (!empty($app['plates.extension.asset'])) {
             if (count($app['plates.extension.asset']) > 1) {
@@ -73,14 +73,14 @@ class PlatesServiceProvider implements ServiceProviderInterface
         }
     }
 
-    private function loadExtensionURI(Application $app, Engine $engine)
+    private function loadExtensionURI(Container $app, Engine $engine)
     {
-        if (isset($app['request']) && strlen($pathInfo = $app['request']->getPathInfo())) {
-            $engine->loadExtension(new URI($pathInfo));
+        if (null !== ($currentRequest = $app['request_stack']->getCurrentRequest())) {
+            $engine->loadExtension(new URI($currentRequest->getPathInfo()));
         }
     }
 
-    private function loadExtensions(Application $app, Engine $engine)
+    private function loadExtensions(Container $app, Engine $engine)
     {
         $this->loadExtensionAsset($app, $engine);
         $this->loadExtensionURI($app, $engine);
@@ -88,12 +88,12 @@ class PlatesServiceProvider implements ServiceProviderInterface
         if (isset($app['url_generator'])) {
             $engine->loadExtension(new Routing($app['url_generator']));
         }
-        if (isset($app['security'])) {
-            $engine->loadExtension(new Security($app['security']));
+        if (isset($app['security.authorization_checker'])) {
+            $engine->loadExtension(new Security($app['security.authorization_checker']));
         }
     }
 
-    private function registerFunctions(Application $app, Engine $engine)
+    private function registerFunctions(Container $app, Engine $engine)
     {
         if (!empty($app['plates.functions'])) {
             foreach ($app['plates.functions'] as $name => $callback) {
@@ -103,30 +103,19 @@ class PlatesServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * @codeCoverageIgnore
-     */
-    public function boot(Application $app)
-    {
-    }
-
-    /**
      * {@inheritDoc}
      */
-    public function register(Application $app)
+    public function register(Container $app)
     {
         $app['plates.directory'] = null;
         $app['plates.file_extension'] = '';
 
-        $app['plates'] = $app->share(function (Application $app) {
-            if (null === $app['plates.directory'] && isset($app['plates.path'])) {
-                $app['plates.directory'] = $app['plates.path'];
-            }
-
+        $app['plates'] = function (Container $app) {
             return $app['plates.loader']($app['plates.engine_factory'](
                 $app['plates.directory'],
                 $app['plates.file_extension']
             ));
-        });
+        };
         $app['plates.engine_factory'] = $app->protect(function ($directory = null, $fileExtension = '') {
             return (strlen($fileExtension) || null === $fileExtension) ?
                 new Engine($directory, $fileExtension) :
