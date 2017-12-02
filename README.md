@@ -20,8 +20,6 @@ The <em>PlatesServiceProvider</em> provides integration with the [Plates](http:/
 * <strong>plates.functions</strong> (optional): A collection of template functions to register.
 * <strong>plates.extension.asset</strong> (optional): The asset extension directory to load that adds the ability to create "cache busted" asset URLs.
 
-The unlisted parameter <code>plates.path</code> is an alias of <code>plates.directory</code> and only exists to offer drop-in support of package [<code>rych/silex-plates-provider</code>](https://packagist.org/packages/rych/silex-plates-provider). Its use is discouraged and will be removed in the next major update.
-
 ## Services
 
 * <strong>plates</strong>: The [<code>Engine</code>](http://platesphp.com/engine) instance. The main way of interacting with Plates.<br />
@@ -46,18 +44,6 @@ Add Plates as a dependency:
 composer require liquidbox/silex-plates:^2.0
 ```
 
-## Symfony Components Integration
-
-The <code>PlatesServiceProvider</code> provides additional integration between some Symfony components and Plates. This will provide you with the following additional capabilities.
-
-### Route Support
-
-If you are using the <code>UrlGeneratorServiceProvider</code>, you will have access to the <code>path()</code> and <code>url()</code> functions. You can find more information in the [Symfony Routing documentation](http://symfony.com/doc/2.8/routing.html).
-
-### Security Support
-
-If you are using the <code>SecurityServiceProvider</code>, you will have access to the <code>is_granted()</code> function in templates. You can find more information in the [Symfony Security documentation](http://symfony.com/doc/2.8/security.html).
-
 ## Usage
 
 ```php
@@ -70,6 +56,18 @@ $app['plates.extension_loader.asset']('/path/to/public');
 // Create a new template
 $template = $app['plates']->make('emails::welcome');
 ```
+
+## Symfony Components Integration
+
+The <code>PlatesServiceProvider</code> provides additional integration between some Symfony components and Plates. This will provide you with the following additional capabilities.
+
+### Routing Support
+
+If you are using the <code>UrlGeneratorServiceProvider</code>, you will have access to the <code>path()</code> and <code>url()</code> functions. You can find more information in the [Symfony Routing documentation](http://symfony.com/doc/2.8/routing.html).
+
+### Security Support
+
+If you are using the <code>SecurityServiceProvider</code>, you will have access to the <code>is_granted()</code> function in templates. You can find more information in the [Symfony Security documentation](http://symfony.com/doc/2.8/security.html).
 
 ## Customization
 
